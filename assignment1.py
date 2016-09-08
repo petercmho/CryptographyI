@@ -56,7 +56,7 @@ for i in range(0, count - 1):
 # 1 2 => 8 + 1 = 9
 # 1 3 => 8 + 2 = 10
 # ...                   C - 1 + q - 1 = C - 2 + q = C - 1 - (1) + q = p*C - 1 - AP(p) - q = p*C - p*(p + 1)/2 - 1 + q
-# 1 9 => 8 + 8 = 16
+# 1 9 => 8 + 8 = 16     where C is 0 base index. (e.g. If there are 10 ciphertexts, C is 9.)
 # 2 3 => 16 + 1 = 17
 # 2 4 => 16 + 2 = 18
 # ...                   C - 1 + C - 2 + q - 1 = 2C - 1 - (1 + 2) + q
