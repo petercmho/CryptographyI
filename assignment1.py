@@ -26,11 +26,14 @@ def charXor(a, b):
     else:
         return [chr(ord(x) ^ ord(y)) for (x, y) in zip(a, b[:len(a)])]
 
-def indexPQ(p, q, count):
+def indexPXorQ(p, q, count):
     if p < q:
         return p*count - p*(p + 1)/2 - 1 + q
     else:
         return q*count - q*(q + 1)/2 - 1 + p
+
+def indexPQ(p, q, count):
+
 
 def getNextIndex(curr, p, q, count, pos):
     nextIndex = (curr + 1) % count
@@ -102,15 +105,17 @@ for p in range(0, count - 1):
                 found = False
                 start = getNextIndex(q, p, q, count, i)
                 nextIndex = start
-                while not found and nextIndex != q:
+                print("i = " + `i` + ", p = " + `p` + ", q = " + `q`)
+                while True:
                     # while nextIndex == p or nextIndex == q or i >= len(cipherTexts[nextIndex]) or cipherTexts[nextIndex][i] == cipherTexts[p][i] or cipherTexts[nextIndex][i] == cipherTexts[q][i]:
                     #     nextIndex = (nextIndex + 1) % count
                     pq1 = indexPQ(p, nextIndex, count - 1)
                     qq1 = indexPQ(q, nextIndex, count - 1)
-                    if cipherTexts[pq1][i] in string.letters:
+                    print("qq1 = " + `qq1` + " nextIndex = " + `nextIndex`)
+                    if cipherTextXors[pq1][i] in string.letters:
                         keyIndex[i] = ord(cipherTexts[p][i]) ^ 0x20
                         found = True
-                    if cipherTexts[qq1][i] in string.letters:
+                    if cipherTextXors[qq1][i] in string.letters:
                         keyIndex[i] = ord(cipherTexts[q][i]) ^ 0x20
                         found = True
                     nextIndex = getNextIndex(nextIndex, p, q, count, i)
