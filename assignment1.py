@@ -26,6 +26,20 @@ def charXor(a, b):
     else:
         return [chr(ord(x) ^ ord(y)) for (x, y) in zip(a, b[:len(a)])]
 
+def indexPQ(p, q, count):
+    if p < q:
+        return p*count - p*(p + 1)/2 - 1 + q
+    else:
+        return q*count - q*(q + 1)/2 - 1 + p
+
+def getNextIndex(curr, p, q, count, pos):
+    nextIndex = (curr + 1) % count
+    while nextIndex == p or nextIndex == q or pos >= len(cipherTexts[nextIndex]) or cipherTexts[nextIndex][i] == cipherTexts[p][i] or cipherTexts[nextIndex][i] == cipherTexts[q][i]:
+        nextIndex = (nextIndex + 1) % count
+    return nextIndex
+    
+
+
 m1m2 = strxor(cipherTexts[0], cipherTexts[1])
 a1a2 = charXor(cipherTexts[0], cipherTexts[1])
 a1a3 = charXor(cipherTexts[0], cipherTexts[2])
@@ -43,9 +57,10 @@ a2a3 = charXor(cipherTexts[1], cipherTexts[2])
 count = len(cipherTexts)
 cipherTextXors = []
 
-for i in range(0, count - 1):
-    for j in range(i+1, count):
-        cipherTextXors.append(charXor(cipherTexts[i], cipherTexts[j]))
+for p in range(0, count - 1):
+    for q in range(p+1, count):
+        cipherTextXors.append(charXor(cipherTexts[p], cipherTexts[q]))
+        # for i in range(0, len(cipherTextXor))
 
 # p q
 # 0 1 => 0
@@ -55,8 +70,8 @@ for i in range(0, count - 1):
 # 0 9 => 8
 # 1 2 => 8 + 1 = 9
 # 1 3 => 8 + 2 = 10
-# ...                   C - 1 + q - 1 = C - 2 + q = C - 1 - (1) + q = p*C - 1 - AP(p) - q = p*C - p*(p + 1)/2 - 1 + q
-# 1 9 => 8 + 8 = 16     where C is 0 base index. (e.g. If there are 10 ciphertexts, C is 9.)
+# ...                   C - 1 + q - 1 = C - 2 + q = C - 1 - (1) + q = p*C - 1 - AP(p) - q = p*C - p*(p + 1)/2 - 1 + q = p*(C - (p + 1)/2) - 1 - q
+# 1 9 => 8 + 8 = 16     where C is 0 base index. (e.g. If there are 10 cipherTexts, C is 9.)
 # 2 3 => 16 + 1 = 17
 # 2 4 => 16 + 2 = 18
 # ...                   C - 1 + C - 2 + q - 1 = 2C - 1 - (1 + 2) + q
@@ -78,8 +93,28 @@ for i in range(0, count - 1):
 # 7 9 => 41 + 2 = 43
 # 8 9 => 43 + 1 = 44
 
-for i in range(0, len(a1a2)):
-    if i not in keyIndex and a1a2[i] in string.letters:
-        k1 = 0x20 ^ ord(cipherTexts[0][i])
-        k2 = 0x20 ^ ord(cipherTexts[1][i])
+for p in range(0, count - 1):
+    for q in range(p + 1, count):
+        index = indexPQ(p, q, count - 1)
+        mpmq = cipherTextXors[index]
+        for i in range(0, len(mpmq)):
+            if i not in keyIndex and mpmq[i] in string.letters:
+                found = False
+                start = getNextIndex(q, p, q, count, i)
+                nextIndex = start
+                while not found and nextIndex != q:
+                    # while nextIndex == p or nextIndex == q or i >= len(cipherTexts[nextIndex]) or cipherTexts[nextIndex][i] == cipherTexts[p][i] or cipherTexts[nextIndex][i] == cipherTexts[q][i]:
+                    #     nextIndex = (nextIndex + 1) % count
+                    pq1 = indexPQ(p, nextIndex, count - 1)
+                    qq1 = indexPQ(q, nextIndex, count - 1)
+                    if cipherTexts[pq1][i] in string.letters:
+                        keyIndex[i] = ord(cipherTexts[p][i]) ^ 0x20
+                        found = True
+                    if cipherTexts[qq1][i] in string.letters:
+                        keyIndex[i] = ord(cipherTexts[q][i]) ^ 0x20
+                        found = True
+                    nextIndex = getNextIndex(nextIndex, p, q, count, i)
+                    if found or nextIndex == start:
+                        break
+
 
