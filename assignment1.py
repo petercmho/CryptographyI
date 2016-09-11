@@ -36,9 +36,12 @@ def indexPQ(p, q, count):
 
 
 def getNextIndex(curr, p, q, count, pos):
-    nextIndex = (curr + 1) % count
-    while nextIndex == p or nextIndex == q or pos >= len(cipherTexts[nextIndex]) or cipherTexts[nextIndex][i] == cipherTexts[p][i] or cipherTexts[nextIndex][i] == cipherTexts[q][i]:
+    start = (curr + 1) % count
+    nextIndex = start
+    while nextIndex == p or nextIndex == q or pos >= len(cipherTexts[nextIndex]) or cipherTexts[nextIndex][pos] == cipherTexts[p][pos] or cipherTexts[nextIndex][pos] == cipherTexts[q][pos]:
         nextIndex = (nextIndex + 1) % count
+        if nextIndex == start:
+            return q
     return nextIndex
     
 
@@ -100,15 +103,14 @@ for p in range(0, count - 1):
     for q in range(p + 1, count):
         index = indexPQ(p, q, count - 1)
         mpmq = cipherTextXors[index]
+        print("p = " + `p` + ", q = " + `q`)
         for i in range(0, len(mpmq)):
             if i not in keyIndex and mpmq[i] in string.letters:
                 found = False
                 start = getNextIndex(q, p, q, count, i)
                 nextIndex = start
-                print("i = " + `i` + ", p = " + `p` + ", q = " + `q`)
+                print("i = " + `i`)
                 while True:
-                    # while nextIndex == p or nextIndex == q or i >= len(cipherTexts[nextIndex]) or cipherTexts[nextIndex][i] == cipherTexts[p][i] or cipherTexts[nextIndex][i] == cipherTexts[q][i]:
-                    #     nextIndex = (nextIndex + 1) % count
                     pq1 = indexPQ(p, nextIndex, count - 1)
                     qq1 = indexPQ(q, nextIndex, count - 1)
                     print("qq1 = " + `qq1` + " nextIndex = " + `nextIndex`)
