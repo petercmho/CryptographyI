@@ -26,14 +26,11 @@ def charXor(a, b):
     else:
         return [chr(ord(x) ^ ord(y)) for (x, y) in zip(a, b[:len(a)])]
 
-def indexPXorQ(p, q, count):
+def indexPQ(p, q, count):
     if p < q:
         return p*count - p*(p + 1)/2 - 1 + q
     else:
         return q*count - q*(q + 1)/2 - 1 + p
-
-def indexPQ(p, q, count):
-
 
 def getNextIndex(curr, p, q, count, pos):
     start = (curr + 1) % count
@@ -41,7 +38,7 @@ def getNextIndex(curr, p, q, count, pos):
     while nextIndex == p or nextIndex == q or pos >= len(cipherTexts[nextIndex]) or cipherTexts[nextIndex][pos] == cipherTexts[p][pos] or cipherTexts[nextIndex][pos] == cipherTexts[q][pos]:
         nextIndex = (nextIndex + 1) % count
         if nextIndex == start:
-            return q
+            return None
     return nextIndex
     
 
@@ -110,7 +107,7 @@ for p in range(0, count - 1):
                 start = getNextIndex(q, p, q, count, i)
                 nextIndex = start
                 print("i = " + `i`)
-                while True:
+                while start is not None:
                     pq1 = indexPQ(p, nextIndex, count - 1)
                     qq1 = indexPQ(q, nextIndex, count - 1)
                     print("qq1 = " + `qq1` + " nextIndex = " + `nextIndex`)
