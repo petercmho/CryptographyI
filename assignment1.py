@@ -99,6 +99,10 @@ for p in range(0, count - 1):
 # 8 9 => 43 + 1 = 44
 
 for p in range(0, count - 1):
+    for q in range(p+1, count):
+        print(`p` + " " + `q` + " => " + `indexPQ(p, q, count - 1)`)
+
+for p in range(0, count - 1):
     for q in range(p + 1, count):
         index = indexPQ(p, q, count - 1)
         mpmq = cipherTextXors[index]
@@ -140,4 +144,4 @@ for i in range(0, len(cipherTexts)):
             message = message + chr(ord(cipherTexts[i][j]) ^ keyIndex[j])
         else:
             message = message + "?"
-    print(message)
+    print(`i` + ": " + message)
