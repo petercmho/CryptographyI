@@ -119,10 +119,16 @@ for p in range(0, count - 1):
                     print("qq1 = " + `qq1` + " nextIndex = " + `nextIndex`)
                     if cipherTextXors[pq1][i] in string.letters:
                         keyIndex[i] = ord(cipherTexts[p][i]) ^ 0x20
-                        found = True
+                        pChr = cipherTexts[p][i] ^ keyIndex[i]
+                        q1Chr = cipherTexts[nextIndex] ^ keyIndex[i]
+                        if cipherTextXors[pq1][i] == (pChr ^ q1Chr):
+                            found = True
                     if cipherTextXors[qq1][i] in string.letters:
                         keyIndex[i] = ord(cipherTexts[q][i]) ^ 0x20
-                        found = True
+                        qChr = cipherTexts[q][i] ^ keyIndex[i]
+                        q1Chr = ciphterTexts[nextIndex] ^ keyIndex[i]
+                        if cipherTextXors[qq1][i] == (qChr ^ q1Chr):
+                            found = True
                     nextIndex = getNextIndex(nextIndex, p, q, count, i)
                     if found or nextIndex == start:
                         break
