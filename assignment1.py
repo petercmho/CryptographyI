@@ -37,12 +37,34 @@ def indexPQ(p, q, count):
 def getNextIndex(curr, p, q, count, pos):
     start = (curr + 1) % count
     nextIndex = start
-    while nextIndex == p or nextIndex == q or pos >= len(cipherTexts[nextIndex]) or cipherTexts[nextIndex][pos] == cipherTexts[p][pos] or cipherTexts[nextIndex][pos] == cipherTexts[q][pos]:
+    while nextIndex == p or nextIndex == q or \
+        pos >= len(cipherTexts[nextIndex]) or \
+        cipherTexts[nextIndex][pos] == cipherTexts[p][pos] or \
+        cipherTexts[nextIndex][pos] == cipherTexts[q][pos]:
         nextIndex = (nextIndex + 1) % count
         if nextIndex == start:
             return None
     return nextIndex
     
+def verifyKey(key, pos):
+    decryptedChars = []
+    for i in range(0, len(cipherTexts)):
+        if pos < len(cipherTexts[i]):
+            decryptedChars.append(ord(cipherTexts[i][pos]) ^ key)
+        else:
+            decryptedChars.append(0x0)
+        print(`i` + ": " + `chr(decryptedChars[i])`)
+    for p in range(0, count - 1):
+        for q in range(p+1, count):
+            pXorq = decryptedChars[p] ^ decryptedChars[q]
+            print("pXorq is " + `chr(pXorq)`)
+            index = indexPQ(p, q, count - 1)
+            print("index = " + `index`)
+            print("cipherTextXors[" + `index` + "][" + `pos` + "] = " + `cipherTextXors[index][pos]`)
+            if pXorq == cipherTextXors[index][pos]:
+                print("Not match in p=" + `p` + " and q=" + `q`)
+                break
+
 
 
 m1m2 = strxor(cipherTexts[0], cipherTexts[1])
@@ -113,21 +135,23 @@ for p in range(0, count - 1):
                 start = getNextIndex(q, p, q, count, i)
                 nextIndex = start
                 print("i = " + `i`)
-                while start is not None:
+                while nextIndex is not None:
                     pq1 = indexPQ(p, nextIndex, count - 1)
                     qq1 = indexPQ(q, nextIndex, count - 1)
                     print("qq1 = " + `qq1` + " nextIndex = " + `nextIndex`)
                     if cipherTextXors[pq1][i] in string.letters:
                         keyIndex[i] = ord(cipherTexts[p][i]) ^ 0x20
-                        pChr = cipherTexts[p][i] ^ keyIndex[i]
-                        q1Chr = cipherTexts[nextIndex] ^ keyIndex[i]
-                        if cipherTextXors[pq1][i] == (pChr ^ q1Chr):
+                        pChr = ord(cipherTexts[p][i]) ^ keyIndex[i]
+                        qChr = ord(cipherTexts[q][i]) ^ keyIndex[i]
+                        q1Chr = ord(cipherTexts[nextIndex][i]) ^ keyIndex[i]
+                        if cipherTextXors[qq1][i] == (qChr ^ q1Chr):
                             found = True
                     if cipherTextXors[qq1][i] in string.letters:
                         keyIndex[i] = ord(cipherTexts[q][i]) ^ 0x20
-                        qChr = cipherTexts[q][i] ^ keyIndex[i]
-                        q1Chr = ciphterTexts[nextIndex] ^ keyIndex[i]
-                        if cipherTextXors[qq1][i] == (qChr ^ q1Chr):
+                        pChr = ord(cipherTexts[p][i]) ^ keyIndex[i]
+                        qChr = ord(cipherTexts[q][i]) ^ keyIndex[i]
+                        q1Chr = ord(cipherTexts[nextIndex][i]) ^ keyIndex[i]
+                        if cipherTextXors[pq1][i] == (pChr ^ q1Chr):
                             found = True
                     nextIndex = getNextIndex(nextIndex, p, q, count, i)
                     if found or nextIndex == start:
